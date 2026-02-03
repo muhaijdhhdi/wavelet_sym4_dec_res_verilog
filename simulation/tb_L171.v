@@ -21,9 +21,9 @@
 module tb_L171;
     // 全局参数
     parameter DATA_WIDTH     = 16;
-    parameter COEF_WIDTH     = 25;
-    parameter INTERNAL_WIDTH = 48;
-    parameter COEF_FRAC      = 23; 
+    parameter COEF_WIDTH     = 18;
+    parameter INTERNAL_WIDTH = 40;
+    parameter COEF_FRAC      = 16; 
     parameter T              = 10;
 
     reg clk;
@@ -86,24 +86,25 @@ module tb_L171;
 
     // ------------------------
 
-    // --- 小波分解系数 (Sym4) ---
-    parameter DEC_H0 = 25'b1111101100100110101001111;  
-    parameter DEC_H1 = 25'b1111111000011010011100111;  
-    parameter DEC_H2 = 25'b0001111111011000111111000;  
-    parameter DEC_H3 = 25'b0011001101110000011101001;  
-    parameter DEC_H4 = 25'b0001001100010000000110100;  
-    parameter DEC_H5 = 25'b1111100110100110011000110;  
-    parameter DEC_H6 = 25'b1111111100110001011111110;  
-    parameter DEC_H7 = 25'b0000001000001111111100011; 
+    // // --- 小波分解系数 (Sym4) ---
+    // parameter DEC_H0 = 25'b1111101100100110101001111;  
+    // parameter DEC_H1 = 25'b1111111000011010011100111;  
+    // parameter DEC_H2 = 25'b0001111111011000111111000;  
+    // parameter DEC_H3 = 25'b0011001101110000011101001;  
+    // parameter DEC_H4 = 25'b0001001100010000000110100;  
+    // parameter DEC_H5 = 25'b1111100110100110011000110;  
+    // parameter DEC_H6 = 25'b1111111100110001011111110;  
+    // parameter DEC_H7 = 25'b0000001000001111111100011; 
 
-    parameter REC_H0 = DEC_H7; 
-    parameter REC_H1 = DEC_H6; 
-    parameter REC_H2 = DEC_H5; 
-    parameter REC_H3 = DEC_H4; 
-    parameter REC_H4 = DEC_H3; 
-    parameter REC_H5 = DEC_H2; 
-    parameter REC_H6 = DEC_H1; 
-    parameter REC_H7 = DEC_H0; 
+    // parameter REC_H0 = DEC_H7; 
+    // parameter REC_H1 = DEC_H6; 
+    // parameter REC_H2 = DEC_H5; 
+    // parameter REC_H3 = DEC_H4; 
+    // parameter REC_H4 = DEC_H3; 
+    // parameter REC_H5 = DEC_H2; 
+    // parameter REC_H6 = DEC_H1; 
+    // parameter REC_H7 = DEC_H0; 
+    `include "coef_params.vh"
     // ------------------------
 
     //--- 实例化各级分解模�? (保持原样) ---

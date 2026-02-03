@@ -1,3 +1,4 @@
+#产生输入数据x
 import numpy as np
 
 seed = 121

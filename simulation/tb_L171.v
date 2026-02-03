@@ -1,5 +1,5 @@
 `timescale 1ns/1ps
-//`define CYCLE VIVADO_SIM
+//`define  VIVADO_SIM
 
 `ifndef VIVADO_SIM
     `include "../baseLine/decompose_L1.v"

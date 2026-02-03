@@ -1,3 +1,4 @@
+#验证分解阶段的误差
 import numpy as np
 
 # ==========================================
@@ -19,7 +20,7 @@ h_dec = [
 # 2. 信号生成
 # ==========================================
 n = np.arange(TOTAL_SAMPLES)
-seed = 12378
+seed = 121
 np.random.seed(seed)
 amplitude = 20000
 #raw_input = amplitude * np.sin(2 * np.pi * n / 128)

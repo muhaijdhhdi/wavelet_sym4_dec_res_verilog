@@ -1,3 +1,4 @@
+#分析分解重构部分的误差
 import numpy as np
 import os
 
@@ -414,7 +415,7 @@ def res_L1(data,h):#8->16
     block_size=8
     num_cycles=len(data)//block_size
     res=[]
-    x_hist=data[13:16]
+    x_hist=data[5:8]
     
     for i in range(1,num_cycles):
         for j in range(block_size):
@@ -533,7 +534,7 @@ analyze_rec_stage("Rec_L5 -> r4", "r4_output.txt", rec_r4)
 analyze_rec_stage("Rec_L4 -> r3", "r3_output.txt", rec_r3)
 analyze_rec_stage("Rec_L3 -> r2", "r2_output.txt", rec_r2)
 analyze_rec_stage("Rec_L2 -> r1", "r1_output.txt", rec_r1)
-analyze_rec_stage("Res_L_1-> baseLine","base_output.txt",final_baseline_rec,front_disp=20,base_or_not=True,start=8)
+analyze_rec_stage("Res_L_1-> baseLine","base_output.txt",final_baseline_rec,front_disp=20,base_or_not=True)
 
 # ==========================================
 # 8. 重构各级信噪比计算

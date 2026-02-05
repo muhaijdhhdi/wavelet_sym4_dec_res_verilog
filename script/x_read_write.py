@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import os
 
-def x_read_write(file_src, file_des=None, scale_factor=20000, seed=121, 
+def x_read_write(file_src, file_des=None, scale_factor=20000, seed=14521, 
                  noise_amp=200, sine_amp=500, dc_offset=10000, num_rows_read=320000):
     """
     num_rows_read: 指定读取的行数。默认 320000 (即 20000 * 16)。

@@ -64,6 +64,7 @@
 
 module wavelet_baseline_removal_top #(
     parameter DATA_WIDTH     = 16,      // 单�?�道数据位宽 (Q16.0)
+    parameter DATA_OUTPUT    = DATA_WIDTH+1, //减法后输出的位宽,防止溢出
     parameter COEF_WIDTH     = 25,      // 系数位宽 (Q2.23)
     parameter COEF_FRAC      = 23,      // 系数小数�?
     parameter INTERNAL_WIDTH = 48,      // 内部计算位宽 (Q25.23)
@@ -103,10 +104,10 @@ module wavelet_baseline_removal_top #(
     
     // 输出：基线，打包�?256�?
     output wire                              baseline_valid,
-    output wire [DATA_WIDTH*16-1:0]          baseline,     // 256�?
+    output wire [DATA_OUTPUT*16-1:0]          baseline,     // 256�?
     
     // 输出：去除基线后的信号，打包�?256�?
-    output wire [DATA_WIDTH*16-1:0]          signal_no_baseline  // 256�?
+    output wire [DATA_OUTPUT*16-1:0]          signal_no_baseline  // 256�?
 );
 
     `include "coef_params.vh"
@@ -467,12 +468,12 @@ module wavelet_baseline_removal_top #(
     // baseline直接输出（已经是寄存器输出）
     generate
         for (gi = 0; gi < 16; gi = gi + 1) begin : pack_baseline
-            assign baseline[DATA_WIDTH*(gi+1)-1 : DATA_WIDTH*gi] = baseline_internal[gi];
+            assign baseline[DATA_OUTPUT*(gi+1)-1 : DATA_OUTPUT*gi] = baseline_internal[gi];
         end
     endgenerate
     
     // 减法打一拍，优化时序
-    reg signed [DATA_WIDTH-1:0] signal_no_baseline_reg [0:15];
+    reg signed [DATA_OUTPUT-1:0] signal_no_baseline_reg [0:15];
     reg baseline_valid_reg;
     
     always @(posedge clk or negedge rst_n) begin
@@ -494,7 +495,7 @@ module wavelet_baseline_removal_top #(
     // 打包去除基线后的信号
     generate
         for (gi = 0; gi < 16; gi = gi + 1) begin : pack_no_baseline
-            assign signal_no_baseline[DATA_WIDTH*(gi+1)-1 : DATA_WIDTH*gi] = signal_no_baseline_reg[gi];
+            assign signal_no_baseline[DATA_OUTPUT*(gi+1)-1 : DATA_OUTPUT*gi] = signal_no_baseline_reg[gi];
         end
     endgenerate
 

@@ -3,7 +3,7 @@ import numpy as np
 import pywt
 import os
 
-def hw_vs_sw(  x_input_path = "D:/project/zu9_modifield+pulse_iir/PL/FMC_FH8052_zu9/FMC_FH8052.srcs/sources_1/imports/src/simulation/x_input.txt",plot_clean_range=150000,plot_base_range=150000):
+def hw_vs_sw( output_num_bits=17,x_input_path = "D:/project/zu9_modifield+pulse_iir/PL/FMC_FH8052_zu9/FMC_FH8052.srcs/sources_1/imports/src/simulation/x_input.txt",plot_clean_range=150000,plot_base_range=150000):
     decompose_level=7
     mode='periodization'
     # mode='sym'
@@ -69,7 +69,7 @@ def hw_vs_sw(  x_input_path = "D:/project/zu9_modifield+pulse_iir/PL/FMC_FH8052_
     # ==========================================
 
     hw_file_path=hw_file_path = "D:/project/zu9_modifield+pulse_iir/PL/FMC_FH8052_zu9/FMC_FH8052.srcs/sources_1/imports/src/simulation/baseline_output.txt"
-    def str2dec(hex_str, bits=16):
+    def str2dec(hex_str, bits=17):
         val = int(hex_str, 16)
         if val >= 2**(bits-1):
             val -= 2**bits
@@ -84,8 +84,8 @@ def hw_vs_sw(  x_input_path = "D:/project/zu9_modifield+pulse_iir/PL/FMC_FH8052_
                     for p in parts:
                         p = p.strip()
                         if p:
-                            # 解析为16位有符号整数
-                            baseline_hw.append(str2dec(p, 16))
+                            # 解析为17位有符号整数
+                            baseline_hw.append(str2dec(p, output_num_bits))
         except Exception as e:
             print(f"读取文件出错: {e}")
     else:
@@ -176,7 +176,7 @@ def hw_vs_sw(  x_input_path = "D:/project/zu9_modifield+pulse_iir/PL/FMC_FH8052_
                     for p in parts:
                         p = p.strip()
                         if p:
-                            clean_signal_hw.append(str2dec(p, 16))
+                            clean_signal_hw.append(str2dec(p, output_num_bits))
         
         clean_signal_hw = np.array(clean_signal_hw)
         
@@ -229,10 +229,12 @@ def hw_vs_sw(  x_input_path = "D:/project/zu9_modifield+pulse_iir/PL/FMC_FH8052_
             
             print(f"Clean Signal 自动对齐完成: 最佳延迟 offset = {best_lag_clean}")
             print(f"Clean Signal 最大绝对误差: {np.max(np.abs(clean_diff)):.4f}")
+            return clean_diff
         # ==============================================================================
 
     else:
         print("未读取到硬件数据，无法进行对比。")
+    
 
 if __name__ == "__main__":
     hw_vs_sw()

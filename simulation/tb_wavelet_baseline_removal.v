@@ -9,6 +9,7 @@ module tb_baseline_removal_top;
     // 1. 参数定义
     //==========================================================================
     parameter DATA_WIDTH  = 16;
+    parameter DATA_OUTPUT = 17;
     parameter TOTAL_DELAY = 154; // 算法+物理延迟
     parameter T           = 10;  // 100MHz
     
@@ -31,12 +32,12 @@ module tb_baseline_removal_top;
 
     // --- 输出信号 ---
     wire baseline_valid;
-    wire [DATA_WIDTH*16-1:0] baseline_packed;
-    wire [DATA_WIDTH*16-1:0] signal_no_baseline_packed;
+    wire [DATA_OUTPUT*16-1:0] baseline_packed;
+    wire [DATA_OUTPUT*16-1:0] signal_no_baseline_packed;
 
     // 辅助解包数组，用于fwrite写入文件
-    wire signed [DATA_WIDTH-1:0] baseline_unpacked [0:15];
-    wire signed [DATA_WIDTH-1:0] signal_no_baseline_unpacked [0:15];
+    wire signed [DATA_OUTPUT-1:0] baseline_unpacked [0:15];
+    wire signed [DATA_OUTPUT-1:0] signal_no_baseline_unpacked [0:15];
 
     // 文件句柄
     integer file_in, file_out_base, file_out_clean;
@@ -62,8 +63,8 @@ module tb_baseline_removal_top;
 
         // Output Unpacking: Bus -> Array
         for (gi = 0; gi < 16; gi = gi + 1) begin : unpack_output
-            assign baseline_unpacked[gi]           = baseline_packed[DATA_WIDTH*(gi+1)-1 : DATA_WIDTH*gi];
-            assign signal_no_baseline_unpacked[gi] = signal_no_baseline_packed[DATA_WIDTH*(gi+1)-1 : DATA_WIDTH*gi];
+            assign baseline_unpacked[gi]           = baseline_packed[DATA_OUTPUT*(gi+1)-1 : DATA_OUTPUT*gi];
+            assign signal_no_baseline_unpacked[gi] = signal_no_baseline_packed[DATA_OUTPUT*(gi+1)-1 : DATA_OUTPUT*gi];
         end
     endgenerate
 
@@ -72,7 +73,8 @@ module tb_baseline_removal_top;
     //==========================================================================
     wavelet_baseline_removal_top #(
         .DATA_WIDTH(DATA_WIDTH),
-        .TOTAL_DELAY(TOTAL_DELAY)
+        .TOTAL_DELAY(TOTAL_DELAY),
+        .DATA_OUTPUT(DATA_OUTPUT)
     ) u_dut (
         .clk(clk),
         .rst_n(rst_n),

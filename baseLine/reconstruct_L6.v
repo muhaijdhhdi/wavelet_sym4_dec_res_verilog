@@ -102,7 +102,7 @@ module reconstruct_L6 #(
     always @(posedge clk or negedge rst_n) begin
         if(!rst_n) begin
             has_data <= 0;
-            cnt_shift <=0;
+//          cnt_shift <=0;
         end else if (cnt_shift>=0 &&cnt_shift<4'd12) begin
             has_data <= {has_data[10:0], din_valid};
         end

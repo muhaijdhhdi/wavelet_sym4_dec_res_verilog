@@ -21,9 +21,9 @@
 module tb_L171;
     // 全局参数
     parameter DATA_WIDTH     = 16;
-    parameter COEF_WIDTH     = 18;
-    parameter INTERNAL_WIDTH = 40;
-    parameter COEF_FRAC      = 16; 
+    parameter COEF_WIDTH     = 25;
+    parameter INTERNAL_WIDTH = 48;
+    parameter COEF_FRAC      = 23; 
     parameter T              = 10;
 
     reg clk;
@@ -470,6 +470,129 @@ module tb_L171;
                 base_bus[12], base_bus[13], base_bus[14], base_bus[15]);
         end
         
+    end
+
+    // =========================================================================
+    // 6. 自动化延迟验证逻辑 (附加代码)
+    // =========================================================================
+    reg [31:0] latency_counter; // 延迟计数器
+    reg        timer_started;   // 计时开始标志
+    
+    // 捕获标志位 (确保只打印第一次)
+    reg f_din, f_l1, f_l2, f_l3, f_l4, f_l5, f_l6, f_l7;
+    reg f_r6, f_r5, f_r4, f_r3, f_r2, f_r1, f_base;
+
+    initial begin
+        latency_counter = 0;
+        timer_started   = 0;
+        f_din = 0; 
+        f_l1 = 0; f_l2 = 0; f_l3 = 0; f_l4 = 0; f_l5 = 0; f_l6 = 0; f_l7 = 0;
+        f_r6 = 0; f_r5 = 0; f_r4 = 0; f_r3 = 0; f_r2 = 0; f_r1 = 0; f_base = 0;
+    end
+
+    // ------------------------------------------
+    // 计数器控制：Din Valid 上升沿触发归零启动
+    // ------------------------------------------
+    always @(posedge clk) begin
+        if (!rst_n) begin
+            timer_started <= 0;
+            latency_counter <= 0;
+        end else begin
+            // 检测输入 din_valid 的第一次上升沿
+            if (din_valid && !f_din) begin
+                timer_started <= 1;
+                latency_counter <= 1; 
+                f_din <= 1;
+                $display("\n============================================================");
+                $display("                PIPELINE LATENCY REPORT                     ");
+                $display("============================================================");
+                $display("Stage           | Time (ns) | Clock Cycles (Latency)");
+                $display("----------------|-----------|-------------------------");
+                $display("Input (Start)   | %9t | %d", $time, 0);
+            end
+            
+            // 计时器递增
+            if (timer_started) begin
+                latency_counter <= latency_counter + 1;
+            end
+        end
+    end
+
+    // ------------------------------------------
+    // 各级 Valid 上升沿捕获与打印
+    // ------------------------------------------
+    always @(posedge clk) begin
+        if (timer_started) begin
+            // --- 分解阶段 (Decomposition) ---
+            if (l1_dout_valid && !f_l1) begin
+                $display("Decompose L1    | %9t | %d", $time, latency_counter);
+                f_l1 <= 1;
+            end
+            if (l2_dout_valid && !f_l2) begin
+                $display("Decompose L2    | %9t | %d", $time, latency_counter);
+                f_l2 <= 1;
+            end
+            if (l3_dout_valid && !f_l3) begin
+                $display("Decompose L3    | %9t | %d", $time, latency_counter);
+                f_l3 <= 1;
+            end
+            if (l4_dout_valid && !f_l4) begin
+                $display("Decompose L4    | %9t | %d", $time, latency_counter);
+                f_l4 <= 1;
+            end
+            if (l5_dout_valid && !f_l5) begin
+                $display("Decompose L5    | %9t | %d", $time, latency_counter);
+                f_l5 <= 1;
+            end
+            if (l6_dout_valid && !f_l6) begin
+                $display("Decompose L6    | %9t | %d", $time, latency_counter);
+                f_l6 <= 1;
+            end
+            if (l7_dout_valid && !f_l7) begin
+                $display("Decompose L7    | %9t | %d", $time, latency_counter);
+                f_l7 <= 1;
+            end
+
+            // --- 重构阶段 (Reconstruction) ---
+            if (r6_dout_valid && !f_r6) begin
+                $display("Reconstruct R6  | %9t | %d", $time, latency_counter);
+                f_r6 <= 1;
+            end
+            if (r5_dout_valid && !f_r5) begin
+                $display("Reconstruct R5  | %9t | %d", $time, latency_counter);
+                f_r5 <= 1;
+            end
+            if (r4_dout_valid && !f_r4) begin
+                $display("Reconstruct R4  | %9t | %d", $time, latency_counter);
+                f_r4 <= 1;
+            end
+            if (r3_dout_valid && !f_r3) begin
+                $display("Reconstruct R3  | %9t | %d", $time, latency_counter);
+                f_r3 <= 1;
+            end
+            if (r2_dout_valid && !f_r2) begin
+                $display("Reconstruct R2  | %9t | %d", $time, latency_counter);
+                f_r2 <= 1;
+            end
+            if (r1_dout_valid && !f_r1) begin
+                $display("Reconstruct R1  | %9t | %d", $time, latency_counter);
+                f_r1 <= 1;
+            end
+
+            // --- 最终输出 ---
+            if (base_dout_valid && !f_base) begin
+                $display("Baseline Out    | %9t | %d", $time, latency_counter);
+                $display("============================================================");
+                $display("VERIFICATION RESULT: Total Latency = %d Cycles", latency_counter);
+                $display("EXPECTED PARAMETER:  TOTAL_DELAY   = %d Cycles", 154); // 这里的 154 可以改成你的参数名
+                if (latency_counter == 154) 
+                    $display("STATUS: [PASS] Latency Matches!");
+                else 
+                    $display("STATUS: [FAIL] Latency Mismatch!");
+                $display("============================================================\n");
+                f_base <= 1;
+            end
+        end
     end
 
 `ifndef VIVADO_SIM

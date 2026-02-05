@@ -64,4 +64,4 @@ def generate_verilog_coeffs(coef_width, coef_frac, file_path="D:/project/zu9_mod
 # ==========================================
 if __name__ == "__main__":
     # 只需要在这里修改位宽，然后运行脚本即可
-    generate_verilog_coeffs(coef_width=25, coef_frac=23)
+    generate_verilog_coeffs(coef_width=18, coef_frac=16)
